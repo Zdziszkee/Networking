@@ -1,0 +1,55 @@
+// Folder-specific settings
+//
+// For a full list of overridable settings, and general information on folder-specific settings,
+// see the documentation: https://zed.dev/docs/configuring-zed#settings-files
+{
+  "inlay_hints": {
+    "enabled": true,
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    "show_other_hints": true
+  },
+  "formatter": "language_server",
+  "format_on_save": "on",
+  "autosave": "on_focus_change",
+  "base_keymap": "JetBrains",
+  "lsp": {
+    "clangd": {
+      "binary": {
+        "path": "/opt/homebrew/opt/llvm/bin/clangd", // Adjust this to your clangd binary location
+        "arguments": [
+          "--background-index", // Indexes files in the background for speed
+          "--compile-commands-dir=build", // Points to compile_commands.json
+          "--clang-tidy", // Runs clang-tidy for extra linting
+          "--completion-style=detailed", // Full signatures in completions
+          "--header-insertion=iwyu", // Suggests headers via "include what you use"
+          "--limit-results=50", // Limits completions to avoid overload
+          "--pch-storage=memory", // Faster precompiled headers (if RAM allows)
+          "--log=verbose" // Detailed logs for debugging (optional)
+        ]
+      },
+      "initialization_options": {
+        "clangdFileStatus": true // Provides file status updates to the editor
+      },
+      "settings": {
+        "completion": {
+          "enableSnippets": true // Enables snippet support in completions
+        }
+      }
+    }
+  },
+  "languages": {
+    "C": {
+      "format_on_save": "on", // Formats code on save using clangd
+      "tab_size": 2, // Sets indentation size
+      "formatter": {
+        "external": {
+          "command": "clang-format"
+        }
+      }
+    }
+  },
+  "files": {
+    "auto_close": true // Automatically closes files when they are no longer needed
+  }
+}
