@@ -42,6 +42,19 @@ pomocniczą funkcję perror, która potrafi przetłumaczyć ten kod na zrozumia�
 człowieka komunikat i wypisać go na ekranie.
 */
 
+/** 7
+(nieobowiązkowe) Modyfikacja powyższego zadania. Zakładamy, że kopiowany plik
+jest plikiem tekstowym. Linie są zakończone bajtami o wartości 10 (znaki LF, w
+języku C zapisywane jako '\n'). Podczas kopiowania należy pomijać parzyste linie
+(tzn. w pliku wynikowym mają się znaleźć pierwsza, trzecia, piąta linia, a
+druga, czwarta, szósta nie).
+*/
+
+/** 8
+(nieobowiązkowe) Kolejna modyfikacja: popraw program tak, aby i znaki '\n', i
+dwubajtowe sekwencje złożone ze znaku '\r' i następującego po nim znaku '\n'
+były traktowane jako terminatory linii.
+*/
 const mode_t default_file_mode = 0644;   // Owner read/write, others read
 const size_t default_buffer_size = 1024; // Buffer size for reading/writing
 
@@ -112,10 +125,10 @@ int main(int args_size, char **args) {
   }
 
   char buffer[default_buffer_size];
-  ssize_t bytes_read;
+  size_t bytes_read;
   while ((bytes_read =
               read_file_content(input_fd, buffer, default_buffer_size)) > 0) {
-    ssize_t bytes_written = write_file_content(output_fd, buffer, bytes_read);
+    size_t bytes_written = write_file_content(output_fd, buffer, bytes_read);
     if (bytes_written == -1 || bytes_written < bytes_read) {
       fprintf(stderr, "Write failed or incomplete\n");
       break;
