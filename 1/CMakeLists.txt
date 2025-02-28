@@ -2,11 +2,14 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Name your project
-project(1 C)
+project(file_operations C)
 
-# Specify the C standard (optional, but good practice)
+# Specify the C standard
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
-# Add the executable target
+# Add the first executable (named "copy_file")
+add_executable(copy_file copy_file_contents.c)
+
+# Add the second executable (named "1")
 add_executable(1 main.c)

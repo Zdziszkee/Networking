@@ -83,29 +83,6 @@ bool is_string_printable(const char *str) {
   }
   return true;
 }
-/** 5
-W dokumentacji POSIX API znajdź opisy czterech podstawowych funkcji plikowego
-wejścia-wyjścia, tzn. open, read, write i close. Czy zgadzają się one z tym, co
-pamiętasz z przedmiotu „Systemy operacyjne”? Jakie znaczenie ma wartość 0
-zwrócona jako wynik funkcji read?
-
-1. `open`: This function is used to open a file descriptor. It takes a filename
-and flags as arguments, and returns a file descriptor if successful, or -1 if an
-error occurs.
-
-2. `read`: This function reads data from a file descriptor into a buffer. It
-takes a file descriptor, a buffer, and the number of bytes to read as arguments.
-It returns the number of bytes read, or -1 if an error occurs. A return value of
-0 indicates that the end of the file has been reached.
-
-3. `write`: This function writes data from a buffer to a file descriptor. It
-takes a file descriptor, a buffer, and the number of bytes to write as
-arguments. It returns the number of bytes written, or -1 if an error occurs.
-
-4. `close`: This function closes a file descriptor. It takes a file descriptor
-as an argument and returns 0 if successful, or -1 if an error occurs.
-
-*/
 
 int main() {
   int numbers[50];
