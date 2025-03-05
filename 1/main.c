@@ -57,7 +57,7 @@ przetestować działanie funkcji is_printable_buf.
 bool is_buffer_printable(const void *buffer, const int size) {
   const unsigned char *byteBuffer = (const unsigned char *)buffer;
   for (int i = 0; i < size; i++) {
-    char character = *byteBuffer;
+    unsigned char character = *byteBuffer;
     if (character < 32 || character > 126) {
       return false;
     }
@@ -75,7 +75,7 @@ mieć sygnaturę bool is_printable_str(const char * str).
 bool is_string_printable(const char *str) {
   const unsigned char *byteBuffer = (const unsigned char *)str;
   while (*byteBuffer != '\0') {
-    char character = *byteBuffer;
+    unsigned char character = *byteBuffer;
     if (character < 32 || character > 126) {
       return false;
     }

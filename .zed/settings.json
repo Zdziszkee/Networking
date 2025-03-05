@@ -16,40 +16,44 @@
   "lsp": {
     "clangd": {
       "binary": {
-        "path": "/opt/homebrew/opt/llvm/bin/clangd", // Adjust this to your clangd binary location
+        "path": "/opt/homebrew/opt/llvm/bin/clangd", // Unchanged: your Homebrew-installed clangd
         "arguments": [
-          "--background-index", // Indexes files in the background for speed
-          "--compile-commands-dir=build", // Points to compile_commands.json
-          "--clang-tidy", // Runs clang-tidy for extra linting
-          "--completion-style=detailed", // Full signatures in completions
-          "--header-insertion=iwyu", // Suggests headers via "include what you use"
-          "--limit-results=50", // Limits completions to avoid overload
-          "--pch-storage=memory", // Faster precompiled headers (if RAM allows)
-          "--log=verbose" // Detailed logs for debugging (optional)
+          "--background-index", // Unchanged: speeds up indexing
+          "--compile-commands-dir=build", // Unchanged: points to compile_commands.json
+          "--clang-tidy", // Unchanged: enables clang-tidy linting
+          "--completion-style=detailed", // Unchanged: detailed completion signatures
+          "--header-insertion=iwyu", // Unchanged: suggests headers
+          "--limit-results=50", // Unchanged: limits completions
+          "--pch-storage=memory", // Unchanged: faster PCH in memory
+          "--log=verbose", // Unchanged: verbose logs
+          "-Weverything", // Added: enables ALL Clang warnings
+          "-Wno-system-headers", // Added: suppresses warnings from system headers
+          "-Wno-c++98-compat", // Added: reduces noise for C99-only code
+          "-Wno-padded" // Added: avoids pedantic struct padding warnings
         ]
       },
       "initialization_options": {
-        "clangdFileStatus": true // Provides file status updates to the editor
+        "clangdFileStatus": true // Unchanged: file status updates
       },
       "settings": {
         "completion": {
-          "enableSnippets": true // Enables snippet support in completions
+          "enableSnippets": true // Unchanged: snippet support
         }
       }
     }
   },
   "languages": {
     "C": {
-      "format_on_save": "on", // Formats code on save using clangd
-      "tab_size": 2, // Sets indentation size
+      "format_on_save": "on", // Unchanged: formats on save
+      "tab_size": 2, // Unchanged: 2-space indentation
       "formatter": {
         "external": {
-          "command": "clang-format"
+          "command": "clang-format" // Unchanged: uses clang-format
         }
       }
     }
   },
   "files": {
-    "auto_close": true // Automatically closes files when they are no longer needed
+    "auto_close": true // Unchanged: auto-close files
   }
 }
