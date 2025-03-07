@@ -17,9 +17,9 @@ int main(int argc, char *argv[]) {
   }
   int port = atoi(argv[1]);
 
-  int server_descriptor = socket(AF_INET, SOCK_STREAM, 0);
+  int server_socket_descriptor = socket(AF_INET, SOCK_STREAM, 0);
 
-  if (server_descriptor < 0) {
+  if (server_socket_descriptor < 0) {
     fprintf(stderr, ("Socket creation failed"));
     return EXIT_FAILURE;
   }
@@ -30,15 +30,16 @@ int main(int argc, char *argv[]) {
       .sin_port = htons(port)                    // use port from argument
   };
 
-  int bind_result = bind(server_descriptor, (struct sockaddr *)&socket_address,
-                         sizeof(socket_address));
+  int bind_result =
+      bind(server_socket_descriptor, (struct sockaddr *)&socket_address,
+           sizeof(socket_address));
   if (bind_result == -1) {
     fprintf(stderr, "Could not bind to socket! \n");
     return EXIT_FAILURE;
   }
 
   int listen_result =
-      listen(server_descriptor,
+      listen(server_socket_descriptor,
              10); // 10 - backlog: The maximum number of pending connections
                   // that can be queued before new ones are refused.
   if (listen_result == -1) {
@@ -47,7 +48,7 @@ int main(int argc, char *argv[]) {
   }
 
   while (true) {
-    int client_socket_descriptor = accept(server_descriptor, NULL, NULL);
+    int client_socket_descriptor = accept(server_socket_descriptor, NULL, NULL);
     if (client_socket_descriptor == -1) {
       fprintf(stderr, "Could not accept connection! \n");
       return EXIT_FAILURE;
@@ -84,7 +85,7 @@ int main(int argc, char *argv[]) {
       return EXIT_FAILURE;
     }
   }
-  int server_close_result = close(server_descriptor);
+  int server_close_result = close(server_socket_descriptor);
   if (server_close_result == -1) {
     fprintf(stderr, "Could not close socket! \n");
     return EXIT_FAILURE;
