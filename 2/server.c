@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
   int port = atoi(argv[1]);
+
   int server_descriptor = socket(AF_INET, SOCK_STREAM, 0);
 
   if (server_descriptor < 0) {
