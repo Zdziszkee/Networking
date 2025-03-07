@@ -1,7 +1,7 @@
 [
   {
-    "label": "Build and Run 2",
-    "command": "cd ./2/build; rm -rf *; cmake ..; cmake --build . --verbose; ./2 20123",
+    "label": "Build 2",
+    "command": "cd ./2/build; rm -rf *; cmake ..; cmake --build . --verbose;",
     //"args": [],
     // Env overrides for the command, will be appended to the terminal's environment from the settings.
     // Current working directory to spawn the command into, defaults to current project root.

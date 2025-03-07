@@ -5,13 +5,13 @@
 
 #define _POSIX_C_SOURCE 200809L
 #include <arpa/inet.h>
+#include <ctype.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
-
 int main(int argc, char *argv[]) {
 
   // Check command line arguments
@@ -72,17 +72,25 @@ int main(int argc, char *argv[]) {
   printf("Sent %zi bytes\n", bytes_written);
 
   // Receive response
-  bytes_written = read(client_socket_descriptor, buf, 16);
-  if (bytes_written == -1) {
+  ssize_t bytes_read = read(client_socket_descriptor, buf, 16);
+  if (bytes_read == -1) {
     fprintf(stderr, "Failed to read");
     close(client_socket_descriptor);
     return 1;
   }
-  printf("Received %zi bytes: ", bytes_written);
+  printf("Received %zi bytes: ", bytes_read);
 
-  // Print received data
-  for (ssize_t i = 0; i < bytes_written; i++) {
-    printf("%c", buf[i]);
+  // Print received data, verifying each byte is printable or a control
+  // character
+  for (ssize_t i = 0; i < bytes_read; i++) {
+    unsigned char c = buf[i];
+
+    if (isprint(c) || c == '\n' || c == '\r' || c == '\t') {
+      printf("%c", c);
+    } else {
+
+      printf("[Not printable character %d]", c);
+    }
   }
   printf("\n");
 
