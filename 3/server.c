@@ -104,61 +104,83 @@ int main(int argc, char *argv[]) {
 
     buffer[number_of_bytes_read] = '\0';
 
-    if (!is_valid_input((char *)buffer)) {
-      const char *error_msg = "ERROR";
-      sendto(server_socket_descriptor, error_msg, strlen(error_msg), 0,
-             (struct sockaddr *)&client_address, client_address_len);
-      continue;
-    }
+    // Print received message from client
+    char client_ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(client_address.sin_addr), client_ip, INET_ADDRSTRLEN);
+    printf("Received from client %s:%d: \"%s\"\n", client_ip,
+           ntohs(client_address.sin_port), buffer);
 
-    if (!has_valid_format((char *)buffer)) {
-      const char *error_msg = "ERROR";
-      sendto(server_socket_descriptor, error_msg, strlen(error_msg), 0,
-             (struct sockaddr *)&client_address, client_address_len);
-      continue;
-    }
+    const char *error_msg = "ERROR\n";
 
-    char *input_copy = strdup((char *)buffer);
-    if (!input_copy) {
-      fprintf(stderr, "Memory allocation failed\n");
-      continue;
-    }
+    // Process each line separately
+    char *saveptr;
+    char *line = strtok_r((char *)buffer, "\n", &saveptr);
 
-    int word_count = 0;
-    int palindrome_count = 0;
+    while (line != NULL) {
+      printf("Processing line: \"%s\"\n", line);
 
-    char *token = strtok(input_copy, " ");
-    while (token != NULL) {
-      if (strlen(token) > 0) {
-        word_count++;
-
-        if (is_palindrome(token)) {
-          palindrome_count++;
-          printf("Palindrome found: \"%s\"\n", token);
-        }
+      if (!is_valid_input(line)) {
+        sendto(server_socket_descriptor, error_msg, strlen(error_msg), 0,
+               (struct sockaddr *)&client_address, client_address_len);
+        line = strtok_r(NULL, "\n", &saveptr);
+        continue;
       }
 
-      token = strtok(NULL, " ");
-    }
-
-    free(input_copy);
-
-    char response[256];
-    int resp_len = snprintf(response, sizeof(response), "%d/%d",
-                            palindrome_count, word_count);
-    if (resp_len < 0 || resp_len >= (int)sizeof(response)) {
-      fprintf(stderr, "Response message formatting failed or was truncated!\n");
-      continue;
-    }
-    size_t response_len = (size_t)resp_len;
-
-    ssize_t write_result =
-        sendto(server_socket_descriptor, response, response_len, 0,
+      if (!has_valid_format(line)) {
+        sendto(server_socket_descriptor, error_msg, strlen(error_msg), 0,
                (struct sockaddr *)&client_address, client_address_len);
+        line = strtok_r(NULL, "\n", &saveptr);
+        continue;
+      }
 
-    if (write_result == -1) {
-      fprintf(stderr, "Could not send to socket! \n");
-      continue;
+      char *input_copy = strdup(line);
+      if (!input_copy) {
+        fprintf(stderr, "Memory allocation failed\n");
+        line = strtok_r(NULL, "\n", &saveptr);
+        continue;
+      }
+
+      int word_count = 0;
+      int palindrome_count = 0;
+
+      char *word_saveptr;
+      char *token = strtok_r(input_copy, " ", &word_saveptr);
+      while (token != NULL) {
+        if (strlen(token) > 0) {
+          word_count++;
+
+          if (is_palindrome(token)) {
+            palindrome_count++;
+            printf("Palindrome found: \"%s\"\n", token);
+          }
+        }
+
+        token = strtok_r(NULL, " ", &word_saveptr);
+      }
+
+      free(input_copy);
+
+      char response[256];
+      int resp_len = snprintf(response, sizeof(response), "%d/%d\n",
+                              palindrome_count, word_count);
+      if (resp_len < 0 || resp_len >= (int)sizeof(response)) {
+        fprintf(stderr,
+                "Response message formatting failed or was truncated!\n");
+        line = strtok_r(NULL, "\n", &saveptr);
+        continue;
+      }
+      size_t response_len = (size_t)resp_len;
+
+      ssize_t write_result =
+          sendto(server_socket_descriptor, response, response_len, 0,
+                 (struct sockaddr *)&client_address, client_address_len);
+
+      if (write_result == -1) {
+        fprintf(stderr, "Could not send to socket! \n");
+      }
+
+      // Process next line
+      line = strtok_r(NULL, "\n", &saveptr);
     }
   }
 
