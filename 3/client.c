@@ -51,9 +51,10 @@ int main(int argc, char *argv[]) {
       message[len - 1] = '\0';
     }
 
-    ssize_t msg_len = strlen(message);
-    ssize_t bytes_written = sendto(client_socket_descriptor, message, msg_len,
-                                   0, (struct sockaddr *)&addr, sizeof(addr));
+    ssize_t message_length = strlen(message);
+    ssize_t bytes_written =
+        sendto(client_socket_descriptor, message, message_length, 0,
+               (struct sockaddr *)&addr, sizeof(addr));
     if (bytes_written == -1) {
       fprintf(stderr, "Failed to send");
       close(client_socket_descriptor);
