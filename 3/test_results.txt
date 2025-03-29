@@ -1,0 +1,116 @@
+
+Test 14... FAILED
+Zapytanie wysłane do przetworzenia przez serwer:
+0000000 111 114  97 122   0 122 101 114 111
+          o   r   a   z  \0   z   e   r   o
+0000009
+Dane zwrócone przez serwer:
+0000000  48  47  49  10
+          0   /   1  \n
+0000004
+Poprawna odpowiedź:
+0000000  69  82  82  79  82
+          E   R   R   O   R
+0000005
+
+Test 15... FAILED
+Zapytanie wysłane do przetworzenia przez serwer:
+0000000 116  97  98   9 105  32 115 112  97  99 106  97
+          t   a   b  \t   i       s   p   a   c   j   a
+0000012
+Dane zwrócone przez serwer:
+0000000  48  47  50  10
+          0   /   2  \n
+0000004
+Poprawna odpowiedź:
+0000000  69  82  82  79  82
+          E   R   R   O   R
+0000005
+
+Test 16... FAILED
+Zapytanie wysłane do przetworzenia przez serwer:
+0000000  76  70  32  10 112 111  32 115 112  97  99 106 105
+          L   F      \n   p   o       s   p   a   c   j   i
+0000013
+Dane zwrócone przez serwer:
+0000000  48  47  51  10
+          0   /   3  \n
+0000004
+Poprawna odpowiedź:
+0000000  69  82  82  79  82
+          E   R   R   O   R
+0000005
+
+
+Test 23... FAILED
+Zapytanie wysłane do przetworzenia przez serwer:
+0000000 111 107 111  32  32  32 107 111 107
+          o   k   o               k   o   k
+0000009
+Dane zwrócone przez serwer:
+0000000  50  47  50  10
+          2   /   2  \n
+0000004
+Poprawna odpowiedź:
+0000000  69  82  82  79  82
+          E   R   R   O   R
+0000005
+
+Test 31... FAILED
+Zapytanie wysłane do przetworzenia przez serwer:
+0000000  67  82  32  76  70  32 110  97  32 107 111 110  99 117  13  10
+          C   R       L   F       n   a       k   o   n   c   u  \r  \n
+0000016
+Dane zwrócone przez serwer:
+0000000  69  82  82  79  82  10
+          E   R   R   O   R  \n
+0000006
+Dopuszczalne odpowiedzi:
+0000000  69  82  82  79  82
+          E   R   R   O   R
+0000005
+0000000  48  47  52
+          0   /   4
+0000003
+0000000  48  47  52  13  10
+          0   /   4  \r  \n
+0000005
+
+Test 32... FAILED
+Zapytanie wysłane do przetworzenia przez serwer:
+0000000  76  70  32 110  97  32 107 111 110  99 117  10
+          L   F       n   a       k   o   n   c   u  \n
+0000012
+Dane zwrócone przez serwer:
+0000000  69  82  82  79  82  10
+          E   R   R   O   R  \n
+0000006
+Dopuszczalne odpowiedzi:
+0000000  69  82  82  79  82
+          E   R   R   O   R
+0000005
+0000000  48  47  51
+          0   /   3
+0000003
+0000000  48  47  51  13  10
+          0   /   3  \r  \n
+0000005
+
+
+
+Test 34... FAILED
+Zapytanie wysłane do przetworzenia przez serwer:
+0000000  99 104 114 122 196 133 115 122  99 122  10
+          c   h   r   z 304 205   s   z   c   z  \n
+0000011
+Dane zwrócone przez serwer:
+0000000  69  82  82  79  82  10
+          E   R   R   O   R  \n
+0000006
+Dopuszczalne odpowiedzi:
+0000000  69  82  82  79  82
+          E   R   R   O   R
+0000005
+0000000  69  82  82  79  82  13  10
+          E   R   R   O   R  \r  \n
+0000007

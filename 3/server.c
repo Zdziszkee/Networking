@@ -37,10 +37,19 @@ bool is_palindrome(const char *str) {
   return true;
 }
 
-bool is_valid_input(const char *str) {
-  for (int i = 0; str[i] != '\0'; i++) {
-    if (!isalpha(str[i]) && !isspace(str[i])) {
+bool is_valid_input(const unsigned char *str, size_t length) {
+  for (size_t i = 0; i < length; i++) {
+    // Check for null bytes, tabs, carriage returns, and line feeds
+    if (str[i] == 0 || str[i] == '\t' || str[i] == '\r' || str[i] == '\n') {
       return false;
+    }
+
+    // Check if character is not an alphabetic character or space
+    if (!isalpha(str[i]) && str[i] != ' ') {
+      // Check if the byte is part of a UTF-8 multibyte sequence
+      if ((str[i] & 0xC0) != 0x80 && (str[i] & 0xC0) != 0xC0) {
+        return false;
+      }
     }
   }
   return true;
@@ -49,12 +58,21 @@ bool is_valid_input(const char *str) {
 bool has_valid_format(const char *str) {
   int len = strlen(str);
 
-  if (len > 0 && isspace(str[0])) {
+  // Check if string begins with space
+  if (len > 0 && isspace((unsigned char)str[0])) {
     return false;
   }
 
-  if (len > 0 && isspace(str[len - 1])) {
+  // Check if string ends with space
+  if (len > 0 && isspace((unsigned char)str[len - 1])) {
     return false;
+  }
+
+  // Check for multiple spaces
+  for (int i = 0; i < len - 1; i++) {
+    if (isspace((unsigned char)str[i]) && isspace((unsigned char)str[i + 1])) {
+      return false;
+    }
   }
 
   return true;
@@ -85,13 +103,12 @@ int main(int argc, char *argv[]) {
   }
 
   while (true) {
-
     unsigned char buffer[65507];
     struct sockaddr_in client_address;
     socklen_t client_address_len = sizeof(client_address);
 
     ssize_t number_of_bytes_read =
-        recvfrom(server_socket_descriptor, buffer, sizeof(buffer) - 1, 0,
+        recvfrom(server_socket_descriptor, buffer, sizeof(buffer), 0,
                  (struct sockaddr *)&client_address, &client_address_len);
 
     if (number_of_bytes_read == -1) {
@@ -99,27 +116,24 @@ int main(int argc, char *argv[]) {
       continue;
     }
 
-    buffer[number_of_bytes_read] = '\0';
+    // Create a null-terminated copy for string operations
+    char safe_buffer[65507];
+    memcpy(safe_buffer, buffer, number_of_bytes_read);
+    safe_buffer[number_of_bytes_read] = '\0';
 
-    // Print received message from client
     char client_ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(client_address.sin_addr), client_ip, INET_ADDRSTRLEN);
     printf("Received from client %s:%d: \"%s\"\n", client_ip,
-           ntohs(client_address.sin_port), buffer);
+           ntohs(client_address.sin_port), safe_buffer);
 
-    const char *erros_message = "ERROR\n";
+    const char *error_message = "ERROR";
 
-    // Process the received message
-    printf("Processing message: \"%s\"\n", buffer);
+    printf("Processing message: \"%s\"\n", safe_buffer);
 
-    if (!is_valid_input((char *)buffer)) {
-      sendto(server_socket_descriptor, erros_message, strlen(erros_message), 0,
-             (struct sockaddr *)&client_address, client_address_len);
-      continue;
-    }
-
-    if (!has_valid_format((char *)buffer)) {
-      sendto(server_socket_descriptor, erros_message, strlen(erros_message), 0,
+    // Validate input - check both the raw bytes and the string format
+    if (!is_valid_input(buffer, number_of_bytes_read) ||
+        !has_valid_format(safe_buffer)) {
+      sendto(server_socket_descriptor, error_message, strlen(error_message), 0,
              (struct sockaddr *)&client_address, client_address_len);
       continue;
     }
@@ -127,10 +141,7 @@ int main(int argc, char *argv[]) {
     int word_count = 0;
     int palindrome_count = 0;
 
-    char buffer_copy[65507];
-    strcpy(buffer_copy, (char *)buffer);
-
-    char *token = strtok(buffer_copy, " ");
+    char *token = strtok(safe_buffer, " ");
     while (token != NULL) {
       if (strlen(token) > 0) {
         word_count++;
@@ -145,16 +156,15 @@ int main(int argc, char *argv[]) {
     }
 
     char response[256];
-    int resp_len = snprintf(response, sizeof(response), "%d/%d\n",
+    int resp_len = snprintf(response, sizeof(response), "%d/%d",
                             palindrome_count, word_count);
     if (resp_len < 0 || resp_len >= (int)sizeof(response)) {
       fprintf(stderr, "Response message formatting failed or was truncated!\n");
       continue;
     }
-    size_t response_len = (size_t)resp_len;
 
     ssize_t write_result =
-        sendto(server_socket_descriptor, response, response_len, 0,
+        sendto(server_socket_descriptor, response, resp_len, 0,
                (struct sockaddr *)&client_address, client_address_len);
 
     if (write_result == -1) {
